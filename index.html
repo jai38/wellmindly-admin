@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WellMindly Admin Portal</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Boxicons for Icons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <!-- Chart.js CDN for Visual Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <!-- 1. Authentication Login Screen -->
+    <div id="login-container" class="auth-wrapper">
+      <div class="glass-auth-card">
+        <div class="auth-header">
+          <div class="logo-circle">
+            <i class="bx bxs-shield"></i>
+          </div>
+          <h1>WellMindly</h1>
+          <p>Administrative Control Center</p>
+        </div>
+        <form id="login-form">
+          <div class="form-group">
+            <label for="email"><i class="bx bx-envelope"></i> Email Address</label>
+            <input type="email" id="email" required placeholder="admin@wellmindly.edu" value="admin@wellmindly.edu" />
+          </div>
+          <div class="form-group">
+            <label for="password"><i class="bx bx-lock-alt"></i> Password</label>
+            <input type="password" id="password" required placeholder="••••••••" value="AdminPass123!" />
+          </div>
+          <div id="login-error" class="error-banner hidden">
+            <i class="bx bx-error-circle"></i> <span id="error-message">Invalid credentials.</span>
+          </div>
+          <button type="submit" class="btn-auth">
+            <span>Access Portal</span>
+            <i class="bx bx-right-arrow-alt"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 2. Main Admin Dashboard -->
+    <div id="app-container" class="app-layout hidden">
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar-aside">
+        <div class="sidebar-logo">
+          <i class="bx bxs-heart-circle"></i>
+          <span class="logo-text">WellMindly</span>
+          <span class="badge-role">ADMIN</span>
+        </div>
+        
+        <nav class="sidebar-nav">
+          <button class="nav-item active" data-tab="overview">
+            <i class="bx bxs-dashboard"></i>
+            <span>Overview</span>
+          </button>
+          <button class="nav-item" data-tab="students">
+            <i class="bx bxs-user-detail"></i>
+            <span>Students</span>
+          </button>
+          <button class="nav-item" data-tab="quizzes">
+            <i class="bx bxs-book-heart"></i>
+            <span>Quizzes</span>
+          </button>
+          <button class="nav-item" data-tab="feedback">
+            <i class="bx bxs-star-half"></i>
+            <span>Feedback</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-profile">
+            <div class="avatar">SA</div>
+            <div class="user-details">
+              <p class="profile-name">Super Admin</p>
+              <p class="profile-email">admin@wellmindly.edu</p>
+            </div>
+          </div>
+          <button id="logout-btn" class="btn-logout" title="Logout">
+            <i class="bx bx-log-out-circle"></i>
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Panel Viewport -->
+      <main class="main-viewport">
+        <!-- Top Bar Header -->
+        <header class="top-header">
+          <div class="header-title-area">
+            <h2 id="view-title">Dashboard Overview</h2>
+            <p id="view-subtitle" class="text-secondary">Summary and trends across WellMindly students.</p>
+          </div>
+          <div class="header-actions">
+            <div class="refresh-indicator">
+              <span class="pulse-dot"></span>
+              Live Data Connected
+            </div>
+          </div>
+        </header>
+
+        <!-- Dynamic Content Canvas -->
+        <div class="content-canvas">
+          
+          <!-- TAB: Overview -->
+          <div id="tab-overview" class="tab-pane">
+            <!-- KPI Summary Cards -->
+            <div class="kpi-grid">
+              <div class="kpi-card glow-card">
+                <div class="kpi-icon icon-blue"><i class="bx bxs-group"></i></div>
+                <div class="kpi-data">
+                  <h3>Total Students</h3>
+                  <p class="kpi-value" id="kpi-students">-</p>
+                  <p class="kpi-meta text-emerald"><i class="bx bx-trending-up"></i> Active directory</p>
+                </div>
+              </div>
+              <div class="kpi-card glow-card">
+                <div class="kpi-icon icon-plum"><i class="bx bxs-file-blank"></i></div>
+                <div class="kpi-data">
+                  <h3>Quiz Submissions</h3>
+                  <p class="kpi-value" id="kpi-submissions">-</p>
+                  <p class="kpi-meta text-secondary">All assessment types</p>
+                </div>
+              </div>
+              <div class="kpi-card glow-card">
+                <div class="kpi-icon icon-green"><i class="bx bxs-smile"></i></div>
+                <div class="kpi-data">
+                  <h3>Avg Daily Mood</h3>
+                  <p class="kpi-value" id="kpi-mood">-</p>
+                  <p class="kpi-meta text-secondary">Ratings 1-5 scale</p>
+                </div>
+              </div>
+              <div class="kpi-card glow-card border-critical">
+                <div class="kpi-icon icon-critical"><i class="bx bxs-error-alt"></i></div>
+                <div class="kpi-data">
+                  <h3>Critical Alerts</h3>
+                  <p class="kpi-value text-critical" id="kpi-critical">-</p>
+                  <p class="kpi-meta text-secondary" style="font-size: 10px; line-height: 1.2; margin-top: 4px;">Severe PHQ-9 cases (score &gt; 15) flagged</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="dashboard-charts">
+              <div class="chart-container glass-card">
+                <h3>Submission Volume Over Time</h3>
+                <p class="chart-subtitle">Daily count of completed student self-reflections</p>
+                <div class="canvas-wrapper">
+                  <canvas id="chart-submissions"></canvas>
+                </div>
+              </div>
+              <div class="chart-container glass-card">
+                <h3>Clinical Severity Distribution</h3>
+                <p class="chart-subtitle">Breakdown of student classifications (PHQ-9 screening)</p>
+                <div class="canvas-wrapper flex-center">
+                  <canvas id="chart-severity"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div class="dashboard-charts mt-24">
+              <div class="chart-container glass-card full-width">
+                <h3>Daily Check-in Mood Distribution</h3>
+                <p class="chart-subtitle">Frequency of emotional ratings (1=Struggling to 5=Excellent)</p>
+                <div class="canvas-wrapper">
+                  <canvas id="chart-moods"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: Students -->
+          <div id="tab-students" class="tab-pane hidden">
+            <div class="filter-bar glass-card">
+              <div class="search-box">
+                <i class="bx bx-search"></i>
+                <input type="text" id="search-student" placeholder="Search by name, email, or university..." />
+              </div>
+            </div>
+
+            <div class="table-container glass-card">
+              <table id="students-table" class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student Name</th>
+                    <th>Email Address</th>
+                    <th>University Domain</th>
+                    <th>Joined Date</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="students-list">
+                  <!-- Dynamic rows go here -->
+                </tbody>
+              </table>
+              
+              <!-- Pagination controls -->
+              <div class="table-pagination" id="students-pagination">
+                <!-- Dynamic pagination buttons -->
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: Quizzes -->
+          <div id="tab-quizzes" class="tab-pane hidden">
+            <!-- Hub View: Quiz Card Grid -->
+            <div id="quizzes-hub-view">
+              <div class="quizzes-grid" id="quizzes-list">
+                <!-- Dynamic quiz cards go here -->
+              </div>
+            </div>
+
+            <!-- Detail View: Quiz Drill-down Insights -->
+            <div id="quiz-detail-view" class="hidden">
+              <div class="detail-actions-bar">
+                <button class="btn-back" id="btn-back-to-quizzes">
+                  <i class="bx bx-left-arrow-alt"></i> Back to Quizzes
+                </button>
+              </div>
+
+              <div class="quiz-detail-dashboard mt-16">
+                <div class="quiz-detail-meta glass-card">
+                  <div class="meta-header">
+                    <h3 id="qd-title">PHQ-9</h3>
+                    <span class="quiz-category-badge" id="qd-category">Depression</span>
+                  </div>
+                  <p id="qd-description" class="text-secondary mt-8"></p>
+                  
+                  <div class="qd-stats-grid mt-24">
+                    <div class="qd-stat-card">
+                      <span class="label">Total Attempts</span>
+                      <strong id="qd-stat-attempts">0</strong>
+                    </div>
+                    <div class="qd-stat-card">
+                      <span class="label">Average Score</span>
+                      <strong id="qd-stat-avg">0</strong>
+                    </div>
+                    <div class="qd-stat-card">
+                      <span class="label">Highest Score</span>
+                      <strong id="qd-stat-highest">0</strong>
+                    </div>
+                  </div>
+
+                  <div class="section-card mt-24" style="padding:0">
+                    <h4>Test Questions Blueprint</h4>
+                    <div class="blueprint-list mt-12" id="qd-questions-list">
+                      <!-- Questions listed -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Submissions Table for this Quiz -->
+                <div class="quiz-submissions-section">
+                  <div class="filter-bar glass-card" style="margin-bottom:16px;">
+                    <div class="search-box">
+                      <i class="bx bx-search"></i>
+                      <input type="text" id="search-qd-submissions" placeholder="Search student name or email..." />
+                    </div>
+                    <div class="dropdown-filter-group" style="margin-left:auto; display:flex; gap:10px;">
+                      <select id="filter-qd-severity">
+                        <option value="">All Severities</option>
+                        <option value="minimal">Minimal</option>
+                        <option value="mild">Mild</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="severe">Severe</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="table-container glass-card">
+                    <table class="data-table">
+                      <thead>
+                        <tr>
+                          <th>Student Name</th>
+                          <th>Completed Date</th>
+                          <th>Score</th>
+                          <th>Classification</th>
+                          <th class="text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="qd-submissions-list">
+                        <!-- Dynamic submissions for specific quiz -->
+                      </tbody>
+                    </table>
+                    
+                    <div class="table-pagination" id="qd-submissions-pagination">
+                      <!-- Pagination controls -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: Feedback -->
+          <div id="tab-feedback" class="tab-pane hidden">
+            <div class="kpi-grid">
+              <div class="kpi-card glow-card">
+                <div class="kpi-icon icon-plum"><i class="bx bxs-star"></i></div>
+                <div class="kpi-data">
+                  <h3>Average Assessment Rating</h3>
+                  <p class="kpi-value" id="feedback-avg-rating">-</p>
+                  <div class="star-rating-display" id="feedback-stars-display"></div>
+                </div>
+              </div>
+              <div class="kpi-card glow-card">
+                <div class="kpi-icon icon-green"><i class="bx bxs-message-dots"></i></div>
+                <div class="kpi-data">
+                  <h3>Feedback Responses</h3>
+                  <p class="kpi-value" id="feedback-total-count">-</p>
+                  <p class="kpi-meta text-secondary">With text comments</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Survey Filter Panel -->
+            <div class="filter-bar glass-card mt-24" style="display: flex; gap: 16px; flex-wrap: wrap;">
+              <div class="search-box" style="flex: 1; min-width: 280px;">
+                <i class="bx bx-search"></i>
+                <input type="text" id="search-feedback" placeholder="Search comments text or email..." />
+              </div>
+              
+              <div class="filter-dropdowns-group" style="display: flex; gap: 12px; margin-left: auto;">
+                <div class="select-wrapper">
+                  <label for="filter-would-use">Would use?</label>
+                  <select id="filter-would-use">
+                    <option value="">All Answers</option>
+                    <option value="Yes, definitely">Yes, definitely</option>
+                    <option value="Maybe">Maybe</option>
+                    <option value="Probably not">Probably not</option>
+                  </select>
+                </div>
+
+                <div class="select-wrapper">
+                  <label for="filter-reach-first">Reach first?</label>
+                  <select id="filter-reach-first">
+                    <option value="">All Options</option>
+                    <option value="Write — on my own">Write — on my own</option>
+                    <option value="Talk — with others">Talk — with others</option>
+                    <option value="Not sure">Not sure</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Feedback Table -->
+            <div class="table-container glass-card mt-16">
+              <table id="feedback-table" class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student Details</th>
+                    <th>Quiz Title</th>
+                    <th>Rating</th>
+                    <th>Would Use? (Q3)</th>
+                    <th>Reach First? (Q4)</th>
+                    <th>Comments Context</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="feedback-list">
+                  <!-- Dynamic feedback rows go here -->
+                </tbody>
+              </table>
+              
+              <div class="table-pagination" id="feedback-pagination">
+                <!-- Pagination controls -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+
+    <!-- 3. Modals -->
+    <!-- Modal: Student Profile Details -->
+    <div id="modal-student" class="modal-wrapper hidden">
+      <div class="modal-card width-xl">
+        <div class="modal-header">
+          <div class="student-profile-header">
+            <div class="profile-avatar" id="modal-avatar">SD</div>
+            <div>
+              <h2 id="modal-student-name">Student Details</h2>
+              <p id="modal-student-email" class="text-secondary"></p>
+            </div>
+          </div>
+          <button class="btn-close-modal" onclick="closeStudentModal()"><i class="bx bx-x"></i></button>
+        </div>
+        <div class="modal-body scrollable">
+          <div class="modal-grid-layout full-width">
+            
+            <!-- Left Card: Profile & Timeline Charts -->
+            <div class="grid-left-col">
+              <div class="section-card glass-card">
+                <h3>Daily Mood Check-ins</h3>
+                <p class="section-subtitle">Student mood rating timeline</p>
+                <div class="canvas-wrapper h-200">
+                  <canvas id="student-mood-line-chart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Card: Reflection assessment history -->
+            <div class="grid-right-col">
+              <div class="section-card glass-card h-full flex flex-col">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                  <div>
+                    <h3>Quiz Reflection History</h3>
+                    <p class="section-subtitle">Completed screening results</p>
+                  </div>
+                  <!-- Search timeline -->
+                  <div class="search-box small">
+                    <i class="bx bx-search"></i>
+                    <input type="text" id="search-student-history" placeholder="Filter history..." />
+                  </div>
+                </div>
+
+                <div class="timeline-quiz-list mt-12" id="student-quizzes-list">
+                  <!-- Timeline quiz completions -->
+                </div>
+                
+                <div class="table-pagination" id="student-history-pagination" style="padding-top:12px; margin-top:auto;">
+                  <!-- Pagination controls -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Assessment Detail Sheet -->
+    <div id="modal-assessment" class="modal-wrapper hidden">
+      <div class="modal-card width-lg">
+        <div class="modal-header">
+          <div class="assessment-header">
+            <h2 id="assessment-modal-title">Assessment Sheet</h2>
+            <p id="assessment-modal-meta" class="text-secondary"></p>
+          </div>
+          <button class="btn-close-modal" onclick="closeAssessmentModal()"><i class="bx bx-x"></i></button>
+        </div>
+        <div class="modal-body scrollable">
+          
+          <!-- Score Badge Summary -->
+          <div class="result-score-summary" id="assessment-badge-card">
+            <div class="badge-score-value">
+              <span id="assessment-score-earned">0</span>
+              <span class="max-sep">/</span>
+              <span id="assessment-score-max">27</span>
+            </div>
+            <div class="badge-score-info">
+              <p class="badge-label">Severity Level</p>
+              <h4 id="assessment-classification">Moderate Depression</h4>
+            </div>
+          </div>
+
+          <!-- AI Generated Feedback Report (Gemini Output) -->
+          <div class="section-card border-plum bg-plum-translucent mt-20" id="assessment-ai-section">
+            <div class="ai-header">
+              <i class="bx bxs-magic-wand text-plum"></i>
+              <h4>AI Companion Reflection Feedback</h4>
+              <span class="ai-pill">WellMindly Brand Voice</span>
+            </div>
+            <div class="ai-body mt-12">
+              <h5 id="ai-headline">Headline</h5>
+              <p id="ai-narrative" class="mt-8 font-medium"></p>
+              
+              <div class="ai-tip-card mt-12">
+                <p class="tip-title"><i class="bx bxs-bulb"></i> Brand Actionable Suggestion</p>
+                <p id="ai-tip" class="tip-content"></p>
+              </div>
+
+              <div class="ai-insights-list mt-12" id="ai-insights">
+                <!-- Insights list -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Student's Submissions (Question & Selected Option Map in TABLE Format) -->
+          <div class="section-card glass-card mt-20">
+            <h3>Student Answer Sheet</h3>
+            <p class="section-subtitle">Responses map showing question weights</p>
+            
+            <div class="table-container mt-16">
+              <table class="data-table small">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">Q#</th>
+                    <th>Question Blueprint</th>
+                    <th>Selected Answer Option</th>
+                    <th class="text-right" style="width: 100px;">Score Weight</th>
+                  </tr>
+                </thead>
+                <tbody id="assessment-answers-table-body">
+                  <!-- Answers rows map dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Survey Detailed Answers -->
+    <div id="modal-survey-details" class="modal-wrapper hidden">
+      <div class="modal-card width-lg">
+        <div class="modal-header">
+          <div>
+            <h2>Detailed Survey Feedback</h2>
+            <p class="text-secondary" id="survey-modal-meta">Student response sheet</p>
+          </div>
+          <button class="btn-close-modal" onclick="closeSurveyModal()"><i class="bx bx-x"></i></button>
+        </div>
+        <div class="modal-body scrollable">
+          <div class="survey-results-box" id="survey-answers-container">
+            <!-- Questions and answers will be rendered here dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JS Logic script -->
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
