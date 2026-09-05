@@ -507,8 +507,11 @@ function renderOverview() {
   document.getElementById('kpi-submissions').textContent = totalSubmissionsVal;
   document.getElementById('kpi-critical').textContent = criticalCount;
 
-  // Average mood calculation
-  document.getElementById('kpi-mood').textContent = '3.8 / 5.0';
+  // Average daily check-in mood, from GET /api/admin/metrics. Null when no
+  // check-ins exist yet, in which case show a dash rather than a made-up number.
+  const avgMood = state.metrics.avgDailyMood;
+  document.getElementById('kpi-mood').textContent =
+    typeof avgMood === 'number' ? `${avgMood.toFixed(1)} / 5.0` : '—';
 
   renderOverviewCharts();
 }
